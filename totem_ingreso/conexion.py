@@ -1,6 +1,6 @@
 import serial
 import dbconnection as db
-from pyfirmata import Arduino
+import pyfirmata
 import time
 
 # Configura el puerto serial
@@ -8,9 +8,9 @@ puerto = 'COM3'  # Cambia esto según el puerto que estés utilizando
 velocidad = 9600  # Ajusta la velocidad según las especificaciones del lector RFID
 dbconn = db.DBConnection()
 dbconn.connect()
-ledVerde = 5
-ledRojo = 3
-arduino = Arduino('COM3')
+arduino = pyfirmata.Arduino('COM3')
+ledVerde = arduino.get_pin('a:5:o')
+ledRojo = arduino.get_pin('a:3:o')
 
 try:
     # Abre el puerto serial
@@ -34,12 +34,14 @@ try:
                 user_rfid = results[0][6]
                 if(user_rfid == uid):
                     print("Acceso concedido")
-                    arduino.digital[ledVerde].write(1)
-                    time.sleep(500)  
+                    #arduino.digital[ledVerde].write(1)
+                    ledVerde.write(1)
+                    time.sleep(3)  
             else:
                 print("Acceso denegado")
-                arduino.digital[ledRojo].write(1)
-                time.sleep(500)
+                #arduino.digital[ledRojo].write(1)
+                ledRojo.write(1)
+                time.sleep(3)
         
 except KeyboardInterrupt:
     # Cierra el puerto serial y finaliza el programa si se presiona Ctrl+C
